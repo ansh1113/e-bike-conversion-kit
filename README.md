@@ -18,4 +18,26 @@ This project is a custom e-bike conversion kit featuring:
 - Compact 4-layer PCB design
 
 ## Installation
-Follow the [Setup Guide](docs/Setup_Guide.md) for wiring and assembly.
+## 1. Hardware Assembly
+- Mount the **VESC ESC** with proper cooling.
+- Connect the **36V battery** to the power input.
+- Wire the **ESP module** to the ESC for PPM signal transmission.
+- Connect **buck converters** for proper voltage regulation.
+- Attach **LEDs**, **GSM/GPS module**, and **gyro sensor**.
+- Install **wireless throttle module** on the handlebar.
+
+## 2. Software Setup
+- Install **VESC Tool** for ESC configuration.
+- Flash the **ESP firmware** using Arduino IDE.
+- Configure **PPM values** for different speed modes.
+
+# Firmware Installation
+## 1. Flashing VESC Firmware
+- Download and install **VESC Tool**.
+- Connect STM32 to your PC via USB.
+- Select the correct **firmware version** and upload.
+
+## 2. Flashing ESP Firmware
+- Install **Arduino IDE** with ESP32/ESP8266 support.
+- Install necessary libraries (`WiFi`, `TinyGPS++`, `Adafruit_GFX` etc.).
+- Compile and upload `Firmware/hook_receiver/hook_receiver.ino`.
