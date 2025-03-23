@@ -22,7 +22,7 @@ namespace Config {
     
     // PPM Signal Values - Properly calibrated for all modes
     constexpr uint16_t PPM_IDLE = 600;
-    constexpr uint16_t PPM_MODE_VALUES[] = {1030, 1180, 1300};  // Low, Medium, High modes
+    constexpr uint16_t PPM_MODE_VALUES[] = {1030, 1180, 1250};  // Low, Medium, High modes
     
     // BLE Parameters
     constexpr char DEVICE_NAME[] = "ebike-controller";
