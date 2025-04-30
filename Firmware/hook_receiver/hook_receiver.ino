@@ -7,17 +7,14 @@ namespace Config {
     constexpr uint8_t PPM_PIN = 22;
     constexpr uint8_t CONNECTION_LED = 2;
     constexpr uint8_t MODE_LEDS[] = {5, 18, 19};
-    constexpr uint8_t BATTERY_LEDS[] = {32, 33, 25, 26}; // Added for battery status
     constexpr unsigned long TIMEOUT = 1000; // ms
     constexpr uint16_t PPM_IDLE = 600;      // Idle PPM value
     constexpr uint16_t PPM_DEFAULT = 600;   // Default PPM when throttle is low
     constexpr uint16_t PPM_MODE_MAX[] = {1100, 1200, 1260}; // Max PPM per mode
     constexpr uint8_t WIFI_CHANNEL = 1;
-    constexpr float MIN_VOLTAGE = 30.0f;    // Minimum voltage for battery LEDs
-    constexpr float VOLTAGE_RANGE = 12.0f;  // Voltage range for 100% (30V to 42V)
 }
 
-struct __attribute__((packed)) StatusData {
+struct _attribute_((packed)) StatusData {
     uint16_t throttleValue; // 0-1000
     uint8_t mode;
 };
@@ -54,16 +51,6 @@ private:
         return map(status.throttleValue, 0, 1000, Config::PPM_DEFAULT, maxPPM);
     }
 
-    void handleBatteryStatus(float voltage) {
-        const int percentage = constrain(
-            static_cast<int>((voltage - Config::MIN_VOLTAGE) * 100 / Config::VOLTAGE_RANGE),
-            0, 100
-        );
-        for (size_t i = 0; i < 4; ++i) {
-            digitalWrite(Config::BATTERY_LEDS[i], percentage >= (75 - i * 25));
-        }
-    }
-
 public:
     bool initialize() {
         Serial.begin(115200);
@@ -73,16 +60,13 @@ public:
         pinMode(Config::PPM_PIN, OUTPUT);
         pinMode(Config::CONNECTION_LED, OUTPUT);
         for (auto pin : Config::MODE_LEDS) pinMode(pin, OUTPUT);
-        for (auto pin : Config::BATTERY_LEDS) pinMode(pin, OUTPUT); // Initialize battery LEDs
 
         // LED startup sequence
         digitalWrite(Config::CONNECTION_LED, HIGH);
         for (auto pin : Config::MODE_LEDS) digitalWrite(pin, HIGH);
-        for (auto pin : Config::BATTERY_LEDS) digitalWrite(pin, HIGH);
         delay(500);
         digitalWrite(Config::CONNECTION_LED, LOW);
         for (auto pin : Config::MODE_LEDS) digitalWrite(pin, LOW);
-        for (auto pin : Config::BATTERY_LEDS) digitalWrite(pin, LOW);
 
         // Initialize WiFi and ESP-NOW
         WiFi.mode(WIFI_STA);
@@ -151,7 +135,6 @@ public:
             if (now - lastVescDebug > 1000) {
                 Serial.printf("VESC - Voltage: %.1fV, RPM: %ld\n",
                              vescUart.data.inpVoltage, vescUart.data.rpm);
-                handleBatteryStatus(vescUart.data.inpVoltage); // Update battery LEDs
                 lastVescDebug = now;
             }
         }
